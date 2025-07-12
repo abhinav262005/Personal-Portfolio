@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nersu Abhinav - Front-End Developer Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --neon-pink: #ff2e63;
+      --neon-blue: #00d4ff;
+      --bg-dark: #0a0e1a;
+      --bg-light: #e6e8fa;
+      --text-dark: #d1d5db;
+      --text-light: #333;
+      --accent-dark: #1a2338;
+      --accent-light: #ffffff;
+      --gradient: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+    .light-mode {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+    .hero-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.85;
+    }
+    .project-card {
+      background: var(--accent-dark);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 46, 99, 0.2);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+    .light-mode .project-card {
+      background: var(--accent-light);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .project-card:hover {
+      transform: translateY(-12px) scale(1.03);
+      box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3), 0 0 20px rgba(255, 46, 99, 0.2);
+    }
+    .skill-card {
+      background: var(--accent-dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 46, 99, 0.2);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+    .light-mode .skill-card {
+      background: var(--accent-light);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .skill-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 32px rgba(0, 212, 255, 0.3);
+    }
+    .tech-box {
+      background: var(--accent-dark);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 46, 99, 0.2);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+    .light-mode .tech-box {
+      background: var(--accent-light);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .tech-box:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 32px rgba(0, 212, 255, 0.3);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 14, 26, 0.95);
+      z-index: 200;
+      overflow-y: auto;
+      backdrop-filter: blur(8px);
+    }
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      max-width: 1100px;
+      width: 90%;
+      margin: 20px;
+      transform: scale(0.7);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      background: var(--accent-dark);
+      border-radius: 20px;
+      border: 1px solid var(--neon-blue);
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+    }
+    .light-mode .modal-content {
+      background: var(--accent-light);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+    .modal.show .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: none;
+    }
+    .input-field {
+      transition: all 0.5s ease;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 46, 99, 0.3);
+      color: var(--text-dark);
+    }
+    .light-mode .input-field {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-light);
+    }
+    .input-field:focus {
+      box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+      border-color: var(--neon-blue);
+      outline: none;
+    }
+    .social-icon {
+      transition: transform 0.5s ease, color 0.3s ease;
+    }
+    .social-icon:hover {
+      transform: scale(1.5) rotate(5deg);
+      color: var(--neon-pink);
+      filter: drop-shadow(0 0 10px var(--neon-blue));
+    }
+    .section {
+      min-height: 100vh;
+      padding: 10rem 1rem;
+      position: relative;
+      z-index: 10;
+    }
+    .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    }
+    nav a {
+      position: relative;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 4px;
+      bottom: -6px;
+      left: 0;
+      background: var(--gradient);
+      transition: width 0.5s ease;
+    }
+    nav a:hover::after {
+      width: 100%;
+    }
+    .btn-primary {
+      background: var(--gradient);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      border-radius: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      transform: translateY(-6px) scale(1.05);
+      box-shadow: 0 16px 32px rgba(0, 212, 255, 0.4), 0 0 25px rgba(255, 46, 99, 0.3);
+    }
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(10, 14, 26, 0.7), transparent);
+      z-index: 0;
+    }
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      opacity: 0.8;
+    }
+    .glitch::before {
+      color: var(--neon-pink);
+      z-index: -1;
+      animation: glitch-anim-1 2.5s infinite ease-in-out;
+      transform: translate(-2px, -2px);
+    }
+    .glitch::after {
+      color: var(--neon-blue);
+      z-index: -2;
+      animation: glitch-anim-2 3s infinite ease-in-out;
+      transform: translate(2px, 2px);
+    }
+    @keyframes glitch-anim-1 {
+      0%, 20% { transform: translate(-2px, -2px); opacity: 0.8; }
+      25%, 45% { transform: translate(-1px, 1px); opacity: 0.6; }
+      50%, 70% { transform: translate(0, 0); opacity: 0.8; }
+      75%, 95% { transform: translate(-1px, -1px); opacity: 0.7; }
+      100% { transform: translate(-2px, -2px); opacity: 0.8; }
+    }
+    @keyframes glitch-anim-2 {
+      0%, 20% { transform: translate(2px, 2px); opacity: 0.8; }
+      25%, 45% { transform: translate(1px, -1px); opacity: 0.6; }
+      50%, 70% { transform: translate(0, 0); opacity: 0.8; }
+      75%, 95% { transform: translate(1px, 1px); opacity: 0.7; }
+      100% { transform: translate(2px, 2px); opacity: 0.8; }
+    }
+    .hero-title {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .typed-container {
+      display: inline-block;
+      min-width: 250px;
+      text-align: left;
+      margin-left: 15px;
+    }
+    .profile-photo {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--neon-blue);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+      margin-bottom: 2rem;
+    }
+    .hero-name {
+      display: inline-block;
+      position: relative;
+      margin-right: 15px;
+    }
+    .hero-name::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      bottom: -5px;
+      left: 0;
+      background: var(--gradient);
+      border-radius: 2px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.3; transform: scaleX(0.8); }
+      50% { opacity: 1; transform: scaleX(1.1); }
+      100% { opacity: 0.3; transform: scaleX(0.8); }
+    }
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
+    }
+    .fade-in {
+      animation: fadeIn 1.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .role-text {
+      font-size: 1.8rem;
+      margin-top: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .nav-bg-dark {
+      background: rgba(0, 0, 0, 0.85);
+    }
+    .nav-bg-light {
+      background: rgba(255, 255, 255, 0.85);
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div id="root"></div>
+  <script type="text/javascript">
+    "use strict";
+
+    const { useState, useEffect, useRef } = React;
+
+    const Nav = () => {
+      const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark-mode');
+      useEffect(() => {
+        document.body.className = theme;
+        localStorage.setItem('theme', theme);
+      }, [theme]);
+      
+      const toggleTheme = () => {
+        setTheme(theme === 'dark-mode' ? 'light-mode' : 'dark-mode');
+      };
+      
+      // Smooth scrolling function
+      const scrollToSection = (id) => {
+        const element = document.getElementById(id);
+        if (element) {
+          window.scrollTo({
+            top: element.offsetTop - 100,
+            behavior: 'smooth'
+          });
+        }
+      };
+
+      return React.createElement(
+        'nav',
+        {
+          className: `fixed top-0 w-full bg-opacity-85 z-50 backdrop-blur-xl shadow-2xl ${theme === 'dark-mode' ? 'nav-bg-dark' : 'nav-bg-light'}`,
+          role: 'navigation',
+          'aria-label': 'Main navigation'
+        },
+        React.createElement(
+          'div',
+          { className: 'max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex justify-between items-center h-24' },
+          React.createElement(
+            'a',
+            { 
+              href: '#hero', 
+              className: 'text-4xl font-black gradient-text glitch', 
+              'data-text': 'Nersu Abhinav',
+              onClick: (e) => {
+                e.preventDefault();
+                scrollToSection('hero');
+              }
+            },
+            'Nersu Abhinav'
+          ),
+          React.createElement(
+            'div',
+            { className: 'flex items-center space-x-10' },
+            ['About', 'Skills', 'Projects', 'Contact'].map(item =>
+              React.createElement(
+                'a',
+                {
+                  key: item,
+                  href: `#${item.toLowerCase()}`,
+                  className: `px-4 py-2 rounded-xl text-lg font-medium transition-colors duration-400 ${theme === 'dark-mode' ? 'text-gray-100 hover:text-neon-pink' : 'text-gray-800 hover:text-neon-blue'}`,
+                  onClick: (e) => {
+                    e.preventDefault();
+                    scrollToSection(item.toLowerCase());
+                  }
+                },
+                item
+              )
+            ),
+            React.createElement(
+              'button',
+              {
+                onClick: toggleTheme,
+                className: 'material-icons text-3xl',
+                'aria-label': `Toggle ${theme === 'dark-mode' ? 'light' : 'dark'} mode`,
+                title: 'Toggle light/dark mode'
+              },
+              theme === 'dark-mode' ? 'light_mode' : 'dark_mode'
+            )
+          )
+        )
+      );
+    };
+
+    const Hero = () => {
+      const canvasRef = useRef(null);
+      const typedRef = useRef(null);
+      const titleRef = useRef(null);
+      
+      useEffect(() => {
+        // Three.js Particle System
+        if (canvasRef.current) {
+          const scene = new THREE.Scene();
+          const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+          const renderer = new THREE.WebGLRenderer({ 
+            canvas: canvasRef.current, 
+            alpha: true,
+            antialias: true
+          });
+          
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          camera.position.z = 6;
+
+          const particleCount = 3000;
+          const positions = new Float32Array(particleCount * 3);
+          for (let i = 0; i < particleCount * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 25;
+          }
+          
+          const geometry = new THREE.BufferGeometry();
+          geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+          
+          const material = new THREE.PointsMaterial({ 
+            size: 0.015, 
+            color: 0x00d4ff, 
+            transparent: true, 
+            opacity: 0.7 
+          });
+          
+          const particles = new THREE.Points(geometry, material);
+          scene.add(particles);
+
+          const animate = () => {
+            particles.rotation.y += 0.002;
+            particles.rotation.x += 0.001;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+          };
+          
+          animate();
+
+          const handleResize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+          };
+          
+          window.addEventListener('resize', handleResize);
+          
+          return () => {
+            window.removeEventListener('resize', handleResize);
+            renderer.dispose();
+            geometry.dispose();
+            material.dispose();
+          };
+        }
+      }, []);
+
+      useEffect(() => {
+        // Typed.js initialization
+        if (typedRef.current) {
+          const typed = new Typed(typedRef.current, {
+            strings: ['Web Developer', 'Web Designer', 'Web Analyst'],
+            typeSpeed: 80,
+            backSpeed: 60,
+            loop: true,
+            backDelay: 1000,
+          });
+          
+          return () => typed.destroy();
+        }
+      }, []);
+
+      useEffect(() => {
+        // GSAP animations
+        if (titleRef.current) {
+          gsap.from('#hero h1', { 
+            opacity: 0, 
+            y: 100, 
+            duration: 2, 
+            ease: 'power4.out' 
+          });
+          
+          gsap.from('#hero p', { 
+            opacity: 0, 
+            y: 100, 
+            duration: 2, 
+            ease: 'power4.out', 
+            delay: 0.5 
+          });
+          
+          gsap.from('#hero img', { 
+            opacity: 0, 
+            scale: 0.8, 
+            duration: 1.5, 
+            ease: 'back.out(1.7)', 
+            delay: 0.3 
+          });
+          
+          gsap.from('#hero .role-text', { 
+            opacity: 0, 
+            y: 50, 
+            duration: 1.5, 
+            ease: 'power4.out', 
+            delay: 1 
+          });
+        }
+      }, []);
+
+      return React.createElement(
+        'section',
+        { id: 'hero', className: 'section flex items-center justify-center relative overflow-hidden' },
+        React.createElement('div', { className: 'hero-overlay' }),
+        React.createElement('canvas', { ref: canvasRef, className: 'hero-canvas' }),
+        React.createElement(
+          'div',
+          { className: 'text-center z-10 px-8 max-w-5xl mx-auto' },
+          React.createElement(
+            'img',
+            {
+              src: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+              alt: 'Nersu Abhinav Profile Photo',
+              className: 'profile-photo mx-auto'
+            }
+          ),
+          React.createElement(
+            'div',
+            { className: 'hero-title' },
+            React.createElement(
+              'h1',
+              { ref: titleRef, className: 'hero-name text-4xl sm:text-5xl lg:text-6xl font-black gradient-text glitch', 'data-text': "I'm, Nersu Abhinav" },
+              "I'm, Nersu Abhinav"
+            )
+          ),
+          React.createElement(
+            'h2',
+            { className: 'role-text text-3xl sm:text-4xl lg:text-5xl font-bold' },
+            "And I'm a ",
+            React.createElement(
+              'span',
+              { ref: typedRef, className: 'gradient-text' }
+            )
+          ),
+          React.createElement(
+            'p',
+            { className: 'text-2xl sm:text-3xl lg:text-4xl mb-12 max-w-4xl mx-auto opacity-90 leading-relaxed' },
+            'Passionate Software Engineering student with a strong interest in frontend development, skilled in building responsive and interactive user interfaces.'
+          ),
+          React.createElement(
+            'a',
+            { 
+              href: '#projects', 
+              className: 'btn-primary inline-block py-5 px-12 rounded-full text-xl tracking-wide floating',
+              onClick: (e) => {
+                e.preventDefault();
+                const projects = document.getElementById('projects');
+                if (projects) {
+                  window.scrollTo({
+                    top: projects.offsetTop - 100,
+                    behavior: 'smooth'
+                  });
+                }
+              }
+            },
+            'Explore My Creations'
+          )
+        )
+      );
+    };
+
+    const About = () => {
+      const aboutRef = useRef(null);
+      
+      useEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from(aboutRef.current, {
+          opacity: 0,
+          y: 120,
+          duration: 2,
+          ease: 'power4.out',
+          scrollTrigger: { 
+            trigger: aboutRef.current, 
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+        });
+      }, []);
+      
+      return React.createElement(
+        'section',
+        { id: 'about', className: 'section' },
+        React.createElement(
+          'div',
+          { ref: aboutRef, className: 'max-w-7xl mx-auto px-8' },
+          React.createElement(
+            'h2',
+            { className: 'text-5xl sm:text-6xl font-black text-center mb-4 section-title glitch', 'data-text': 'About Me' },
+            'About Me'
+          ),
+          React.createElement('p', { className: 'text-2xl text-center mb-12 gradient-text' }, 'My Introduction'),
+          React.createElement(
+            'div',
+            { className: 'flex flex-col md:flex-row items-center gap-16' },
+            React.createElement(
+              'div',
+              { className: 'text-center md:text-left space-y-8 flex-1' },
+              React.createElement(
+                'p',
+                { className: 'text-xl sm:text-2xl leading-relaxed' },
+                'Driven and detail-oriented Computer Science student with a strong passion for web development and proven proficiency in both frontend and backend technologies. Skilled in designing and developing responsive, user-centric websites and scalable web applications. Committed to contributing to innovative projects, mastering emerging technologies, and growing as a full-stack developer within dynamic, collaborative environments.'
+              ),
+              React.createElement(
+                'a',
+                { href: '#', className: 'btn-primary inline-flex items-center text-white py-4 px-10 rounded-full floating' },
+                React.createElement('span', { className: 'material-icons mr-3 text-2xl' }, 'download'),
+                'Download CV'
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'flex-1' },
+              React.createElement(
+                'div',
+                { className: 'grid grid-cols-1 sm:grid-cols-3 gap-8' },
+                React.createElement(
+                  'div',
+                  { className: 'tech-box p-6 floating' },
+                  React.createElement('h3', { className: 'text-2xl font-bold gradient-text mb-4' }, 'Frontend'),
+                  React.createElement(
+                    'ul',
+                    { className: 'list-none space-y-2 text-lg' },
+                    ['HTML', 'CSS', 'Bootstrap', 'JavaScript', 'React'].map(skill =>
+                      React.createElement('li', { key: skill }, skill)
+                    )
+                  )
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'tech-box p-6 floating', style: { animationDelay: '0.2s' } },
+                  React.createElement('h3', { className: 'text-2xl font-bold gradient-text mb-4' }, 'Backend'),
+                  React.createElement(
+                    'ul',
+                    { className: 'list-none space-y-2 text-lg' },
+                    ['Java', 'Python', 'C#', 'C++'].map(skill =>
+                      React.createElement('li', { key: skill }, skill)
+                    )
+                  )
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'tech-box p-6 floating', style: { animationDelay: '0.4s' } },
+                  React.createElement('h3', { className: 'text-2xl font-bold gradient-text mb-4' }, 'Database'),
+                  React.createElement(
+                    'ul',
+                    { className: 'list-none space-y-2 text-lg' },
+                    ['MySQL', 'PostgreSQL', 'MongoDB'].map(skill =>
+                      React.createElement('li', { key: skill }, skill)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+    };
+
+    const Skills = () => {
+      const skillsRef = useRef(null);
+      
+      useEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from('.skill-card', {
+          opacity: 0,
+          y: 100,
+          duration: 1.5,
+          stagger: 0.3,
+          ease: 'power4.out',
+          scrollTrigger: { 
+            trigger: skillsRef.current, 
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+        });
+      }, []);
+      
+      return React.createElement(
+        'section',
+        { id: 'skills', className: 'section bg-opacity-50 bg-black light:bg-gray-100' },
+        React.createElement(
+          'div',
+          { ref: skillsRef, className: 'max-w-7xl mx-auto px-8' },
+          React.createElement(
+            'h2',
+            { className: 'text-5xl sm:text-6xl font-black text-center mb-20 section-title glitch', 'data-text': 'My Skills' },
+            'My Skills'
+          ),
+          React.createElement(
+            'div',
+            { className: 'grid grid-cols-1 sm:grid-cols-3 gap-10' },
+            React.createElement(
+              'div',
+              { className: 'skill-card p-8' },
+              React.createElement('h3', { className: 'text-2xl font-bold gradient-text mb-6' }, 'Completed'),
+              React.createElement(
+                'ul',
+                { className: 'list-disc list-inside text-lg space-y-4' },
+                React.createElement('li', null, 'Developed a voice transcript using Python and Google APIs.'),
+                React.createElement('li', null, 'Created a ChatGPT clone.')
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'skill-card p-8' },
+              React.createElement('h3', { className: 'text-2xl font-bold gradient-text mb-6' }, 'Clients'),
+              React.createElement(
+                'p',
+                { className: 'text-lg' },
+                'Collaborated on small projects and personal initiatives to build experience.'
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'skill-card p-8' },
+              React.createElement('h3', { className: 'text-2xl font-bold gradient-text mb-6' }, 'Experience'),
+              React.createElement(
+                'ul',
+                { className: 'list-disc list-inside text-lg space-y-4' },
+                React.createElement('li', null, 'Participated in a hackathon and won runner-up position.'),
+                React.createElement('li', null, 'Learning full-stack development through academic and self-driven projects.')
+              )
+            )
+          )
+        )
+      );
+    };
+
+    const Projects = ({ setModalData }) => {
+      const projectsRef = useRef(null);
+      const projectData = [
+        { 
+          id: 1, 
+          title: 'Quantum Calculator', 
+          image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=250&q=80', 
+          desc: 'An AI-powered calculator with a Tkinter GUI for seamless user interactions.', 
+          link: '#',
+          details: 'This project uses advanced mathematical algorithms to provide precise calculations with a sleek, user-friendly interface.'
+        },
+        { 
+          id: 2, 
+          title: 'Neural Chatbot', 
+          image: 'https://images.unsplash.com/photo-1677442135722-5f5e06cc6b73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=250&q=80', 
+          desc: 'A Python-based conversational AI using NLTK and Tkinter for natural language processing.', 
+          link: '#',
+          details: 'The chatbot utilizes natural language processing to understand and respond to user queries in a conversational manner.'
+        },
+        { 
+          id: 3, 
+          title: 'Image Matrix', 
+          image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=250&q=80', 
+          desc: 'A dynamic image search engine built with HTML, CSS, and JavaScript leveraging APIs.', 
+          link: '#',
+          details: 'This image search engine integrates with multiple APIs to provide a vast collection of images with advanced filtering options.'
+        },
+        { 
+          id: 4, 
+          title: 'BioSync AI', 
+          image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=250&q=80', 
+          desc: 'A web app delivering personalized plant care insights using HTML, CSS, and JavaScript.', 
+          link: '#',
+          details: 'BioSync AI uses machine learning to analyze plant health and provide customized care recommendations.'
+        },
+        { 
+          id: 5, 
+          title: 'Astro Predictor', 
+          image: 'https://images.unsplash.com/photo-1505506874110-6a7a69069a08?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=250&q=80', 
+          desc: 'A real-time weather forecasting tool with HTML, CSS, and JavaScript integration.', 
+          link: '#',
+          details: 'Astro Predictor provides hyper-local weather forecasts using real-time data from meteorological services.'
+        }
+      ];
+      
+      useEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from('.project-card', {
+          opacity: 0,
+          y: 100,
+          duration: 1.5,
+          stagger: 0.3,
+          ease: 'power4.out',
+          scrollTrigger: { 
+            trigger: projectsRef.current, 
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        });
+      }, []);
+      
+      return React.createElement(
+        'section',
+        { id: 'projects', className: 'section' },
+        React.createElement(
+          'div',
+          { ref: projectsRef, className: 'max-w-7xl mx-auto px-8' },
+          React.createElement(
+            'h2',
+            { className: 'text-5xl sm:text-6xl font-black text-center mb-20 section-title glitch', 'data-text': 'My Projects' },
+            'My Projects'
+          ),
+          React.createElement(
+            'div',
+            { className: 'flex justify-center mb-16' },
+            React.createElement(
+              'button',
+              { className: 'px-8 py-4 rounded-full font-bold text-white btn-primary floating' },
+              'All'
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12' },
+            projectData.map(project =>
+              React.createElement(
+                'div',
+                { key: project.id, className: 'project-card' },
+                React.createElement('img', {
+                  src: project.image,
+                  alt: project.title,
+                  className: 'w-full h-64 object-cover',
+                  style: { filter: 'brightness(0.9) contrast(1.1)' }
+                }),
+                React.createElement(
+                  'div',
+                  { className: 'p-8' },
+                  React.createElement('h3', { className: 'text-2xl font-bold gradient-text mb-4' }, project.title),
+                  React.createElement('p', { className: 'text-gray-400 light:text-gray-600 mb-6 text-lg' }, project.desc),
+                  React.createElement(
+                    'button',
+                    {
+                      onClick: () => setModalData(project),
+                      className: 'inline-flex items-center text-neon-blue hover:text-neon-pink font-bold text-lg'
+                    },
+                    React.createElement('span', { className: 'material-icons mr-2 text-2xl' }, 'visibility'),
+                    'View Details'
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+    };
+
+    const Contact = () => {
+      const contactRef = useRef(null);
+      const [contactData, setContactData] = useState({ name: '', email: '', message: '' });
+      const [errors, setErrors] = useState({});
+      
+      useEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from(contactRef.current, {
+          opacity: 0,
+          y: 120,
+          duration: 2,
+          ease: 'power4.out',
+          scrollTrigger: { 
+            trigger: contactRef.current, 
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        });
+      }, []);
+      
+      const handleSubmit = e => {
+        e.preventDefault();
+        const newErrors = {};
+        if (!contactData.name.trim()) newErrors.name = 'Name is required';
+        if (!contactData.email.trim()) newErrors.email = 'Email is required';
+        else if (!/\S+@\S+\.\S+/.test(contactData.email)) newErrors.email = 'Invalid email format';
+        if (!contactData.message.trim()) newErrors.message = 'Message is required';
+        
+        if (Object.keys(newErrors).length === 0) {
+          alert('Message sent successfully! (This is a demo.)');
+          setContactData({ name: '', email: '', message: '' });
+          setErrors({});
+        } else {
+          setErrors(newErrors);
+        }
+      };
+      
+      const handleChange = e => {
+        setContactData({ ...contactData, [e.target.id]: e.target.value });
+        if (errors[e.target.id]) setErrors({ ...errors, [e.target.id]: '' });
+      };
+      
+      return React.createElement(
+        'section',
+        { id: 'contact', className: 'section relative bg-opacity-50 bg-black light:bg-gray-100' },
+        React.createElement('div', { className: 'absolute inset-0 bg-gradient-to-b from-black to-transparent opacity-30 z-0' }),
+        React.createElement(
+          'div',
+          { ref: contactRef, className: 'max-w-7xl mx-auto relative z-10 px-8' },
+          React.createElement(
+            'h2',
+            { className: 'text-5xl sm:text-6xl font-black text-center mb-20 section-title glitch', 'data-text': 'Get in Touch' },
+            'Get in Touch'
+          ),
+          React.createElement(
+            'form',
+            { 
+              onSubmit: handleSubmit,
+              className: 'max-w-2xl mx-auto space-y-10 bg-accent-dark light:bg-white p-12 rounded-3xl shadow-2xl', 
+              style: { border: '1px solid rgba(0, 212, 255, 0.3)' } 
+            },
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { htmlFor: 'name', className: 'block text-lg font-bold' }, 'Name'),
+              React.createElement('input', {
+                id: 'name',
+                type: 'text',
+                value: contactData.name,
+                onChange: handleChange,
+                className: `input-field w-full mt-3 p-5 rounded-xl ${errors.name ? 'border-neon-pink' : ''}`,
+                required: true,
+                'aria-required': 'true'
+              }),
+              errors.name && React.createElement('p', { className: 'text-neon-pink text-base mt-2' }, errors.name)
+            ),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { htmlFor: 'email', className: 'block text-lg font-bold' }, 'Email'),
+              React.createElement('input', {
+                id: 'email',
+                type: 'email',
+                value: contactData.email,
+                onChange: handleChange,
+                className: `input-field w-full mt-3 p-5 rounded-xl ${errors.email ? 'border-neon-pink' : ''}`,
+                required: true,
+                'aria-required': 'true'
+              }),
+              errors.email && React.createElement('p', { className: 'text-neon-pink text-base mt-2' }, errors.email)
+            ),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { htmlFor: 'message', className: 'block text-lg font-bold' }, 'Message'),
+              React.createElement('textarea', {
+                id: 'message',
+                rows: '6',
+                value: contactData.message,
+                onChange: handleChange,
+                className: `input-field w-full mt-3 p-5 rounded-xl ${errors.message ? 'border-neon-pink' : ''}`,
+                required: true,
+                'aria-required': 'true'
+              }),
+              errors.message && React.createElement('p', { className: 'text-neon-pink text-base mt-2' }, errors.message)
+            ),
+            React.createElement(
+              'button',
+              { type: 'submit', className: 'btn-primary w-full text-white py-5 rounded-xl text-xl floating' },
+              'Transmit Message'
+            )
+          )
+        )
+      );
+    };
+
+    const Footer = () => {
+      const [showBackToTop, setShowBackToTop] = useState(false);
+      
+      useEffect(() => {
+        const handleScroll = () => setShowBackToTop(window.scrollY > 500);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+      
+      const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      
+      return React.createElement(
+        'footer',
+        { className: 'py-16 bg-black light:bg-white text-center' },
+        React.createElement(
+          'div',
+          { className: 'max-w-7xl mx-auto px-8' },
+          React.createElement(
+            'div',
+            { className: 'flex justify-center space-x-12 mb-10' },
+            [
+              { href: 'https://linkedin.com/in/your-profile', label: 'LinkedIn', icon: 'business' },
+              { href: 'https://github.com/your-profile', label: 'GitHub', icon: 'code' },
+              { href: 'https://leetcode.com/u/Nersu_Abhinav/', label: 'LeetCode', icon: 'school' },
+              { href: 'https://www.codechef.com/users/abhinav_2610', label: 'CodeChef', icon: 'code' },
+              { href: 'https://www.hackerrank.com/profile/abhinavnerusu', label: 'HackerRank', icon: 'code' },
+              { href: 'https://www.geeksforgeeks.org/user/abhinav2005/', label: 'GeeksforGeeks', icon: 'code' }
+            ].map((link, index) =>
+              React.createElement(
+                'a',
+                { 
+                  key: index, 
+                  href: link.href, 
+                  className: 'social-icon text-gray-400 light:text-gray-600', 
+                  'aria-label': link.label, 
+                  target: '_blank', 
+                  rel: 'noopener noreferrer' 
+                },
+                React.createElement('span', { className: 'material-icons text-4xl' }, link.icon)
+              )
+            )
+          ),
+          React.createElement(
+            'p',
+            { className: 'text-gray-500 light:text-gray-400 text-lg' },
+            `© ${new Date().getFullYear()} Nersu Abhinav. All rights reserved.`
+          ),
+          showBackToTop && React.createElement(
+            'button',
+            {
+              onClick: scrollToTop,
+              className: 'material-icons text-neon-blue mt-8 hover:text-neon-pink text-5xl',
+              'aria-label': 'Back to top'
+            },
+            'arrow_upward'
+          )
+        )
+      );
+    };
+
+    const Modal = ({ modalData, setModalData }) => {
+      const modalRef = useRef(null);
+      
+      useEffect(() => {
+        if (modalData) {
+          document.body.style.overflow = 'hidden';
+          gsap.fromTo(
+            modalRef.current,
+            { scale: 0.7, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.6, ease: 'power4.out' }
+          );
+        } else {
+          document.body.style.overflow = '';
+        }
+        
+        return () => {
+          document.body.style.overflow = '';
+        };
+      }, [modalData]);
+      
+      const closeModal = () => {
+        gsap.to(modalRef.current, {
+          scale: 0.7,
+          opacity: 0,
+          duration: 0.5,
+          ease: 'power4.in',
+          onComplete: () => setModalData(null)
+        });
+      };
+      
+      if (!modalData) return null;
+      
+      return React.createElement(
+        'div',
+        { 
+          className: 'modal show', 
+          onClick: closeModal 
+        },
+        React.createElement(
+          'div',
+          { 
+            ref: modalRef, 
+            className: 'modal-content', 
+            onClick: e => e.stopPropagation() 
+          },
+          React.createElement(
+            'button',
+            {
+              onClick: closeModal,
+              className: 'material-icons float-right text-gray-400 light:text-gray-600 hover:text-neon-pink text-4xl',
+              'aria-label': 'Close modal'
+            },
+            'close'
+          ),
+          React.createElement('h3', { className: 'text-4xl font-black gradient-text mb-8' }, modalData.title),
+          React.createElement('img', {
+            src: modalData.image,
+            alt: modalData.title,
+            className: 'w-full h-80 object-cover rounded-2xl mb-8',
+            style: { filter: 'drop-shadow(0 0 20px rgba(0, 212, 255, 0.3))' }
+          }),
+          React.createElement('p', { className: 'mb-10 text-gray-400 light:text-gray-600 text-xl leading-relaxed' }, modalData.details),
+          React.createElement(
+            'a',
+            { 
+              href: modalData.link, 
+              target: '_blank', 
+              rel: 'noopener noreferrer',
+              className: 'btn-primary inline-flex items-center text-white py-4 px-10 rounded-full text-xl' 
+            },
+            React.createElement('span', { className: 'material-icons mr-3 text-2xl' }, 'link'),
+            'Launch Project'
+          )
+        )
+      );
+    };
+
+    const App = () => {
+      const [modalData, setModalData] = useState(null);
+      
+      useEffect(() => {
+        // Set initial theme
+        const savedTheme = localStorage.getItem('theme') || 'dark-mode';
+        document.body.className = savedTheme;
+      }, []);
+      
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(Nav, null),
+        React.createElement(Hero, null),
+        React.createElement(About, null),
+        React.createElement(Skills, null),
+        React.createElement(Projects, { setModalData }),
+        React.createElement(Contact, null),
+        React.createElement(Footer, null),
+        React.createElement(Modal, { modalData, setModalData })
+      );
+    };
+
+    ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
+  </script>
+</body>
+</html>
